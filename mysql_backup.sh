@@ -13,18 +13,18 @@ do
     dump_name="${db_name}_$T.sql"
     echo "db_$db_name backup start time $T"
     if ! ssh "$host" "mysqldump '$db_name' -u '$user' -p'$password' > '$db_name'_'$T'.sql"; then
-        echo "mysqldump or ssh failed" 1>&2
+        echo "mysqldump or ssh failed" 2>&1
         retcode=1
         continue
     fi
     if ! scp -q "$host":"$dump_name" "$dir"; then
-        echo "scp failed" 1>&2
+        echo "scp failed" 2>&1
         retcode=1
         continue
     fi
-    echo "$dump_name copying succeeded, removing remote copy..." 1>&2
+    echo "$dump_name copying succeeded, removing remote copy..." 2>&1
     ssh "$host" "rm $dump_name" || true
-    echo "removing completed!" 1>&2
-    echo "db_$db_name backup end time $(date +%Y_%m_%d_%H:%M)" 1>&2
+    echo "removing completed!" 2>&1
+    echo "db_$db_name backup end time $(date +%Y_%m_%d_%H:%M)" 2>&1
 done
 exit $retcode
